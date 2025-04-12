@@ -157,6 +157,30 @@
     .task-item.due-soon {
       border-left-color: var(--warning-color);
     }
+    /* القوائم المنسدلة */
+select {
+  background-color: rgba(0, 0, 0, 0.8); /* تغيير خلفية القائمة */
+  color: #fff; /* تغيير لون النص */
+  border: 1px solid var(--main-color); /* تحسين الإطار */
+  padding: 0.8rem;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+select:hover {
+  background-color: rgba(0, 0, 0, 0.9); /* لون مختلف عند التمرير */
+}
+
+select:focus {
+  box-shadow: 0 0 0 2px var(--main-color); /* تحسين التركيز */
+}
+
+/* خيارات القائمة */
+option {
+  background-color: rgba(0, 0, 0, 0.8); /* خلفية الخيارات */
+  color: #fff; /* لون النص */
+}
     
     .task-content {
       flex: 1;
