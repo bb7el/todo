@@ -13,365 +13,342 @@
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <style>
-    /* تعريف متغيرات الألوان */
-    :root {
-      --main-color: #00ffcc;
-      --secondary-color: #302b63;
-      --dark-bg: #0f0c29;
-      --light-bg: #ffffff;
-      --text-dark: #fff;
-      --text-light: #000;
-      --success-color: #00ffaa;
-      --warning-color: #ffaa00;
-      --danger-color: #ff5555;
-      --priority-high: #ff5555;
-      --priority-medium: #ffaa00;
-      --priority-low: #55ff00;
-    }
-    
-    /* الأساسيات */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Tajawal', sans-serif;
-    }
-    
-    body {
-      background: linear-gradient(135deg, var(--dark-bg), var(--secondary-color), #24243e);
-      color: var(--text-dark);
-      overflow-x: hidden;
-      min-height: 100vh;
-      transition: all 0.3s ease;
-    }
-    
-    body.light-mode {
-      background: linear-gradient(135deg, var(--light-bg), #e0e0e0);
-      color: var(--text-light);
-    }
-    
-    /* الهيدر */
-    header {
-      padding: 2rem;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.4);
-      box-shadow: 0 0 15px var(--main-color);
-    }
-    
-    h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 3rem;
-      color: var(--main-color);
-      text-shadow: 0 0 10px var(--main-color);
-    }
-    
-    p.subtitle {
-      font-size: 1.2rem;
-      margin-top: 0.5rem;
-      color: #ccc;
-      text-shadow: 0 0 5px #00ffaa;
-    }
-    
-    /* الحاويات */
-    .container {
-      max-width: 1200px;
-      margin: 3rem auto;
-      padding: 2rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0, 255, 170, 0.3);
-    }
-    
-    /* الأقسام */
-    .section {
-      margin-bottom: 2rem;
-      padding: 1.5rem;
-      background-color: rgba(0, 0, 0, 0.2);
-      border-radius: 15px;
-      box-shadow: inset 0 0 10px rgba(0, 255, 170, 0.3);
-    }
-    
-    .section-title {
-      color: var(--main-color);
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-      border-bottom: 2px solid var(--main-color);
-      padding-bottom: 0.5rem;
-    }
-    
-    /* شريط التقدم */
-    .progress-container {
-      margin: 1.5rem 0;
-    }
-    
-    .progress-bar {
-      height: 25px;
-      background: #222;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: inset 0 0 10px #00ff99;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(to right, #00ffaa, #00ccff);
-      transition: width 0.4s ease;
-    }
-    
-    /* المهام */
-    .tasks-container {
-      margin-top: 2rem;
-    }
-    
-    .tasks-list {
-      list-style: none;
-      padding: 0;
-    }
-    
-    .task-item {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1.2rem;
-      margin-bottom: 1rem;
-      border-radius: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.3s ease;
-      border-left: 5px solid var(--main-color);
-      position: relative;
-      animation: slideDown 0.5s ease;
-    }
-    
-    .task-item.completed {
-      border-left-color: var(--success-color);
-      opacity: 0.7;
-    }
-    
-    .task-item.overdue {
-      border-left-color: var(--danger-color);
-      animation: pulseWarning 1.5s infinite;
-    }
-    
-    .task-item.due-soon {
-      border-left-color: var(--warning-color);
-    }
-    /* القوائم المنسدلة */
-select {
-  background-color: var(--dark-bg); /* نفس لون الخلفية */
-  color: var(--text-dark); /* لون النص */
-  border: 1px solid var(--main-color); /* إطار متناسق مع التصميم */
-  padding: 0.8rem;
-  border-radius: 8px;
-  outline: none;
-  transition: all 0.3s ease;
-}
+</head>
+<body>
+  <!-- الهيدر -->
+  <header>
+    <h1>TaskMaster XP</h1>
+    <p class="subtitle">حول إنتاجيتك إلى لعبة</p>
+  </header>
 
-select:hover {
-  background-color: var(--secondary-color); /* تأثير مختلف عند التمرير */
-}
+  <div class="container">
+    <!-- التنقل -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('tasks')">المهام</div>
+      <div class="tab" onclick="switchTab('dashboard')">لوحة التحكم</div>
+      <div class="tab" onclick="switchTab('stats')">الإحصائيات</div>
+      <div class="tab" onclick="switchTab('achievements')">الإنجازات</div>
+      <div class="tab" onclick="switchTab('team')">الفريق</div>
+    </div>
 
-select:focus {
-  box-shadow: 0 0 0 2px var(--main-color); /* تحسين التركيز */
-}
+    <!-- قسم المهام -->
+    <div id="tasks-tab" class="tab-content active">
+      <!-- شريط التقدم -->
+      <div class="section">
+        <h3 class="section-title">تقدمك</h3>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="xpBar"></div>
+          </div>
+          <div class="level-display">
+            المستوى: <span id="level">1</span> | النقاط: <span id="xp">0</span>/<span id="xpMax">100</span>
+          </div>
+        </div>
+      </div>
 
-/* خيارات القائمة */
-option {
-  background-color: var(--dark-bg); /* خلفية الخيارات */
-  color: var(--text-dark); /* لون النص */
-}
-    .task-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .task-title {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-    }
-    
-    .task-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      font-size: 0.9rem;
-      color: #aaa;
-    }
-    
-    .task-priority {
-      padding: 0.2rem 0.5rem;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-    
-    .priority-high {
-      background-color: rgba(255, 85, 85, 0.2);
-      color: var(--priority-high);
-    }
-    
-    .priority-medium {
-      background-color: rgba(255, 170, 0, 0.2);
-      color: var(--priority-medium);
-    }
-    
-    .priority-low {
-      background-color: rgba(85, 255, 0, 0.2);
-      color: var(--priority-low);
-    }
-    
-    .task-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-    
-    .task-btn {
-      background-color: transparent;
-      border: 2px solid var(--main-color);
-      color: var(--main-color);
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: bold;
-    }
-    
-    .task-btn:hover {
-      background-color: var(--main-color);
-      color: #000;
-    }
-    
-    .task-btn.complete {
-      border-color: var(--success-color);
-      color: var(--success-color);
-    }
-    
-    .task-btn.complete:hover {
-      background-color: var(--success-color);
-      color: #000;
-    }
-    
-    .task-btn.edit {
-      border-color: var(--warning-color);
-      color: var(--warning-color);
-    }
-    
-    .task-btn.edit:hover {
-      background-color: var(--warning-color);
-      color: #000;
-    }
-    
-    .task-btn.delete {
-      border-color: var(--danger-color);
-      color: var(--danger-color);
-    }
-    
-    .task-btn.delete:hover {
-      background-color: var(--danger-color);
-      color: #fff;
-    }
-    
-    /* نموذج إضافة مهمة */
-    .task-form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .form-label {
-      margin-bottom: 0.5rem;
-      color: var(--main-color);
-      font-weight: bold;
-    }
-    
-    .form-control {
-      padding: 0.8rem;
-      border-radius: 8px;
-      border: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      font-size: 1rem;
-      outline: none;
-      transition: all 0.3s ease;
-    }
-    
-    .form-control:focus {
-      box-shadow: 0 0 0 2px var(--main-color);
-    }
-    
-    .btn {
-      padding: 0.8rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      background-color: var(--main-color);
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 1rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-    
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 255, 170, 0.4);
-    }
-    
-    .btn-secondary {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-    
-    /* لوحة التحكم */
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    
-    .widget {
-      background: rgba(0, 0, 0, 0.2);
-      padding: 1.5rem;
-      border-radius: 15px;
-      box-shadow: inset 0 0 10px rgba(0, 255, 170, 0.2);
-    }
-    
-    .widget-title {
-      color: var(--main-color);
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-    
-    /* التنقل */
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 1.5rem;
-    }
-    
-    .tab {
-      padding: 0.8rem 1.5rem;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s ease;
-    }
-    
-    .tab.active {
-      border-bottom-color: var(--main-color);
-      color: var(--main-color);
+      <!-- نموذج إضافة مهمة -->
+      <div class="section">
+        <h3 class="section-title">إضافة مهمة جديدة</h3>
+        <div class="task-form">
+          <div class="form-group">
+            <label for="taskTitle" class="form-label">عنوان المهمة</label>
+            <input type="text" id="taskTitle" class="form-control" placeholder="أدخل عنوان المهمة">
+          </div>
+          
+          <div class="form-group">
+            <label for="taskDescription" class="form-label">الوصف (اختياري)</label>
+            <textarea id="taskDescription" class="form-control" rows="1" placeholder="أضف وصفًا للمهمة"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="taskDeadline" class="form-label">الموعد النهائي</label>
+            <input type="datetime-local" id="taskDeadline" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label for="taskPriority" class="form-label">الأولوية</label>
+            <select id="taskPriority" class="form-control">
+              <option value="low">منخفضة</option>
+              <option value="medium" selected>متوسطة</option>
+              <option value="high">عالية</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="taskCategory" class="form-label">الفئة</label>
+            <select id="taskCategory" class="form-control">
+              <option value="work">عمل</option>
+              <option value="personal">شخصي</option>
+              <option value="study">دراسة</option>
+              <option value="health">صحة</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="taskRepeat" class="form-label">التكرار</label>
+            <select id="taskRepeat" class="form-control">
+              <option value="none">لا يوجد</option>
+              <option value="daily">يومي</option>
+              <option value="weekly">أسبوعي</option>
+              <option value="monthly">شهري</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="taskFile" class="form-label">مرفق (اختياري)</label>
+            <input type="file" id="taskFile" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label for="taskReminder" class="form-label">تذكير قبل</label>
+            <select id="taskReminder" class="form-control">
+              <option value="none">لا يوجد</option>
+              <option value="15m">15 دقيقة</option>
+              <option value="1h">ساعة واحدة</option>
+              <option value="1d">يوم واحد</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">الإجراءات</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn" onclick="addTask()">
+                <i class="icon">+</i> إضافة مهمة
+              </button>
+              <button class="btn btn-secondary" onclick="startVoiceInput()">
+                <i class="icon">🎤</i> إدخال صوتي
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- فلترة وترتيب المهام -->
+      <div class="section">
+        <h3 class="section-title">إدارة المهام</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+          <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label for="filterTasks" class="form-label">تصفية المهام</label>
+            <select id="filterTasks" class="form-control" onchange="filterTasks(this.value)">
+              <option value="all">الكل</option>
+              <option value="completed">مكتملة</option>
+              <option value="pending">قيد الإنجاز</option>
+              <option value="overdue">متأخرة</option>
+            </select>
+          </div>
+          
+          <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label for="sortTasks" class="form-label">ترتيب المهام</label>
+            <select id="sortTasks" class="form-control" onchange="sortTasks(this.value)">
+              <option value="date-desc">الأحدث أولاً</option>
+              <option value="date-asc">الأقدم أولاً</option>
+              <option value="priority">حسب الأولوية</option>
+            </select>
+          </div>
+          
+          <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label for="searchTasks" class="form-label">بحث</label>
+            <input type="text" id="searchTasks" class="form-control" placeholder="ابحث في المهام..." oninput="searchTasks(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- قائمة المهام -->
+      <div class="section tasks-container">
+        <h3 class="section-title">قائمة المهام</h3>
+        <ul class="tasks-list" id="taskList">
+          <!-- المهام ستضاف هنا ديناميكيًا -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- لوحة التحكم -->
+    <div id="dashboard-tab" class="tab-content">
+      <div class="dashboard">
+        <!-- إحصائيات سريعة -->
+        <div class="widget">
+          <h4 class="widget-title">إحصائيات سريعة</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="background: rgba(0, 255, 170, 0.1); padding: 1rem; border-radius: 10px;">
+              <div style="font-size: 2rem; color: var(--main-color);">12</div>
+              <div style="font-size: 0.8rem;">المهام المكتملة</div>
+            </div>
+            <div style="background: rgba(0, 255, 170, 0.1); padding: 1rem; border-radius: 10px;">
+              <div style="font-size: 2rem; color: var(--main-color);">5</div>
+              <div style="font-size: 0.8rem;">المهام النشطة</div>
+            </div>
+            <div style="background: rgba(0, 255, 170, 0.1); padding: 1rem; border-radius: 10px;">
+              <div style="font-size: 2rem; color: var(--main-color);">3</div>
+              <div style="font-size: 0.8rem;">المهام المتأخرة</div>
+            </div>
+            <div style="background: rgba(0, 255, 170, 0.1); padding: 1rem; border-radius: 10px;">
+              <div style="font-size: 2rem; color: var(--main-color);">85%</div>
+              <div style="font-size: 0.8rem;">معدل الإنجاز</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- تقدم الأسبوع -->
+        <div class="widget">
+          <h4 class="widget-title">تقدم الأسبوع</h4>
+          <div class="chart-container">
+            <canvas id="weeklyChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- توزيع المهام -->
+        <div class="widget">
+          <h4 class="widget-title">توزيع المهام</h4>
+          <div class="chart-container">
+            <canvas id="tasksChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- نشاط الفريق -->
+        <div class="widget">
+          <h4 class="widget-title">نشاط الفريق</h4>
+          <div style="margin-top: 1rem;">
+            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+              <div style="width: 30px; height: 30px; background: #00ffaa; border-radius: 50%; margin-left: 0.5rem;"></div>
+              <div style="flex: 1;">
+                <div>أحمد</div>
+                <div style="height: 5px; background: rgba(255,255,255,0.1); margin-top: 0.2rem;">
+                  <div style="width: 75%; height: 100%; background: var(--main-color);"></div>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+              <div style="width: 30px; height: 30px; background: #00aaff; border-radius: 50%; margin-left: 0.5rem;"></div>
+              <div style="flex: 1;">
+                <div>محمد</div>
+                <div style="height: 5px; background: rgba(255,255,255,0.1); margin-top: 0.2rem;">
+                  <div style="width: 60%; height: 100%; background: var(--main-color);"></div>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+              <div style="width: 30px; height: 30px; background: #aa00ff; border-radius: 50%; margin-left: 0.5rem;"></div>
+              <div style="flex: 1;">
+                <div>سارة</div>
+                <div style="height: 5px; background: rgba(255,255,255,0.1); margin-top: 0.2rem;">
+                  <div style="width: 90%; height: 100%; background: var(--main-color);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- المهام القادمة -->
+        <div class="widget">
+          <h4 class="widget-title">المهام القادمة</h4>
+          <div style="margin-top: 1rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div>اجتماع الفريق</div>
+              <div style="color: #aaa; font-size: 0.8rem;">غدًا 10 ص</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div>تسليم المشروع</div>
+              <div style="color: #aaa; font-size: 0.8rem;">بعد غد 3 م</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div>مراجعة الوثائق</div>
+              <div style="color: #aaa; font-size: 0.8rem;">الجمعة 11 ص</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- الإنجازات الأخيرة -->
+        <div class="widget">
+          <h4 class="widget-title">الإنجازات الأخيرة</h4>
+          <div style="margin-top: 1rem;">
+            <div style="display: flex; align-items: center; margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(0,255,170,0.1); border-radius: 8px;">
+              <div style="width: 30px; height: 30px; background: gold; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: 0.5rem;">🏆</div>
+              <div>
+                <div style="font-weight: bold;">بطل الإنتاجية</div>
+                <div style="font-size: 0.8rem; color: #aaa;">أكملت 10 مهام هذا الأسبوع</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(0,255,170,0.1); border-radius: 8px;">
+              <div style="width: 30px; height: 30px; background: silver; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: 0.5rem;">⭐</div>
+              <div>
+                <div style="font-weight: bold;">مثابر</div>
+                <div style="font-size: 0.8rem; color: #aaa;">عملت 5 أيام متتالية</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- قسم الإحصائيات -->
+    <div id="stats-tab" class="tab-content">
+      <div class="dashboard">
+        <!-- إحصائيات المهام -->
+        <div class="widget">
+          <h4 class="widget-title">إحصائيات المهام</h4>
+          <div class="chart-container">
+            <canvas id="statsChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- أداء الأسبوع -->
+        <div class="widget">
+          <h4 class="widget-title">أداء الأسبوع</h4>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- توزيع الأولويات -->
+        <div class="widget">
+          <h4 class="widget-title">توزيع الأولويات</h4>
+          <div class="chart-container">
+            <canvas id="priorityChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- سجل النشاط -->
+        <div class="widget">
+          <h4 class="widget-title">سجل النشاط</h4>
+          <div style="max-height: 300px; overflow-y: auto; margin-top: 1rem;">
+            <div style="display: flex; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div style="width: 30px; height: 30px; background: rgba(0,255,170,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: 0.5rem;">✓</div>
+              <div>
+                <div>أكملت مهمة "مراجعة التصميم"</div>
+                <div style="font-size: 0.8rem; color: #aaa;">اليوم 10:45 ص</div>
+              </div>
+            </div>
+            <div style="display: flex; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div style="width: 30px; height: 30px; background: rgba(255,85,85,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: 0.5rem;">✗</div>
+              <div>
+                <div>حذفت مهمة "اجتماع غير مهم"</div>
+                <div style="font-size: 0.8rem; color: #aaa;">اليوم 9:30 ص</div>
+              </div>
+            </div>
+            <div style="display: flex; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div style="width: 30px; height: 30px; background: rgba(0,170,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: 0.5rem;">+</div>
+              <div>
+                <div>أضفت مهمة جديدة "تسليم المشروع"</div>
+                <div style="font-size: 0.8rem; color: #aaa;">بالأمس 4:15 م</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- قسم الإنجازات -->
+    <div id="achievements-tab" class="tab-content">
+      <div class="section">
+        <h3 class="section-title">إنجازاتك</h3>
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+          <div style="flex: 1; background: rgba(0,255,170,0.1); padding: 1rem; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2rem;">3</div>
+            <div style="font-size: 0.9rem;">إنجازات مكتملة</div>
+          </div>
+          <div style="flex: 1; background: rgba(0,255,170,0.1); padding: 1rem; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2rem;">7</div>
+            <div style="font-size: 0.9rem;">إنجازات متبقية</div>
     }
     
     .tab-content {
