@@ -1248,20 +1248,31 @@ function showNotification(message, type = 'success') {
 }
 
 // مثال على استدعاء الرسالة عند حذف مهمة
- function deleteTask(taskId) {
-      state.tasks = state.tasks.filter(t => t.id !== taskId);
-      saveTasks();
-      renderTasks();
-    
-
-  // منطق حذف المهمة هنا
-  // ...
-
-  // إظهار رسالة تنبيه
-  showNotification('تم حذف المهمة بنجاح!', 'danger');
+function deleteTask(taskId) {
+  const container = document.getElementById('notification-container');
+  
+  // إنشاء رسالة تأكيد مخصصة
+  const confirmationDiv = document.createElement('div');
+  confirmationDiv.className = 'notification warning';
+  confirmationDiv.innerHTML = `
+    <span>هل أنت متأكد من أنك تريد حذف هذه المهمة؟</span>
+    <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="confirmDelete(${taskId})">نعم</button>
+    <button class="btn btn-secondary" style="margin-left: 0.5rem;" onclick="this.parentElement.remove()">لا</button>
+  `;
+  
+  container.appendChild(confirmationDiv);
 }
 
-
+function confirmDelete(taskId) {
+  state.tasks = state.tasks.filter(t => t.id !== taskId);
+  saveTasks();
+  renderTasks();
+  showNotification('تم حذف المهمة بنجاح!', 'danger');
+  
+  // إزالة رسالة التأكيد بعد الحذف
+  const container = document.getElementById('notification-container');
+  container.innerHTML = '';
+}
 
 
 
