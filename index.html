@@ -351,6 +351,54 @@
       background-color: rgba(255, 255, 255, 0.1);
       color: #fff;
     }
+
+    .notification {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 255, 170, 0.3);
+  color: var(--text-dark);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+  transition: all 0.3s ease;
+}
+
+.notification.success {
+  background-color: var(--success-color);
+}
+
+.notification.warning {
+  background-color: var(--warning-color);
+}
+
+.notification.danger {
+  background-color: var(--danger-color);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
     
     /* لوحة التحكم */
     .dashboard {
@@ -521,6 +569,7 @@
   </header>
 
   <div class="container">
+    <div id="notification-container" style="position: fixed; top: 1rem; right: 1rem; z-index: 1000;"></div>
     <!-- التنقل -->
     <div class="tabs">
       <div class="tab" onclick="switchTab('tasks')">المهام</div>
@@ -1070,6 +1119,7 @@
         <button class="btn btn-secondary" onclick="hideInviteModal()">إلغاء</button>
       </div>
     </div>
+    
   </div>
 
   <!-- الكود البرمجي -->
@@ -1176,11 +1226,57 @@
       }
     }
 
-    function deleteTask(taskId) {
+   
+
+
+function showNotification(message, type = 'success') {
+  const container = document.getElementById('notification-container');
+  
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.innerHTML = `
+    <span>${message}</span>
+    <button onclick="this.parentElement.remove()" style="background: transparent; border: none; color: inherit; cursor: pointer;">✖</button>
+  `;
+
+  container.appendChild(notification);
+
+  // إزالة الرسالة تلقائيًا بعد 3 ثوانٍ
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+// مثال على استدعاء الرسالة عند حذف مهمة
+ function deleteTask(taskId) {
       state.tasks = state.tasks.filter(t => t.id !== taskId);
       saveTasks();
       renderTasks();
-    }
+    
+
+  // منطق حذف المهمة هنا
+  // ...
+
+  // إظهار رسالة تنبيه
+  showNotification('تم حذف المهمة بنجاح!', 'danger');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
 
     function editTask(taskId) {
       const task = state.tasks.find(t => t.id === taskId);
@@ -1200,6 +1296,9 @@
       // تمرير التركيز إلى حقل العنوان
       document.getElementById('taskTitle').focus();
     }
+    document.getElementById('deleteTaskButton').addEventListener('click', function() {
+  deleteTask(1); // حذف المهمة
+});
 
     // وظائف التقدم والمستويات
     function gainXP(amount) {
