@@ -159,9 +159,9 @@
     }
     /* القوائم المنسدلة */
 select {
-  background-color: rgba(0, 0, 0, 0.8); /* تغيير خلفية القائمة */
-  color: #fff; /* تغيير لون النص */
-  border: 1px solid var(--main-color); /* تحسين الإطار */
+  background-color: var(--dark-bg); /* نفس لون الخلفية */
+  color: var(--text-dark); /* لون النص */
+  border: 1px solid var(--main-color); /* إطار متناسق مع التصميم */
   padding: 0.8rem;
   border-radius: 8px;
   outline: none;
@@ -169,7 +169,7 @@ select {
 }
 
 select:hover {
-  background-color: rgba(0, 0, 0, 0.9); /* لون مختلف عند التمرير */
+  background-color: var(--secondary-color); /* تأثير مختلف عند التمرير */
 }
 
 select:focus {
@@ -178,10 +178,9 @@ select:focus {
 
 /* خيارات القائمة */
 option {
-  background-color: rgba(0, 0, 0, 0.8); /* خلفية الخيارات */
-  color: #fff; /* لون النص */
+  background-color: var(--dark-bg); /* خلفية الخيارات */
+  color: var(--text-dark); /* لون النص */
 }
-    
     .task-content {
       flex: 1;
       display: flex;
